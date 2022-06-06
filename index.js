@@ -31,7 +31,7 @@ client.on("messageCreate", message => {
 
         const voiceChannelBot = message.guild.channels.cache.find(x => x.type == "GUILD_VOICE" && x.members.has(client.user.id))
         if (voiceChannelBot && voiceChannel.id != voiceChannelBot.id) {
-            return message.channel.send("Qualun'altro sta già ascoltando della musica")
+            return message.channel.send("Qualun'altro sta già ascoltando della musica (Assistenza)")
         }
 
         let args = message.content.split(/\s+/)
