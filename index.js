@@ -48,6 +48,19 @@ client.on("messageCreate", message => {
         })
     }
 
+    if (['repeat', 'loop'].includes(command)) {
+        const mode = distube.setRepeatMode(message)
+        message.channel.send(
+            `Set repeat mode to \`${
+                mode
+                    ? mode === 2
+                        ? 'All Queue'
+                        : 'This Song'
+                    : 'Off'
+            }\``,
+        )
+    }
+
     if (message.content == "!calpause") {
         const voiceChannel = message.member.voice.channel
         if (!voiceChannel) {
@@ -184,6 +197,18 @@ client.on("messageCreate", message => {
                 })
             })
     }
+
+    // Queue status template
+    const status = queue =>
+    `Volume: \`${queue.volume}%\` | Filter: \`${
+        queue.filters.join(', ') || 'Off'
+    }\` | Loop: \`${
+        queue.repeatMode
+        ? queue.repeatMode === 2
+            ? 'All Queue'
+            : 'This Song'
+        : 'Off'
+    }\` | Autoplay: \`${queue.autoplay ? 'On' : 'Off'}\``
 
     if (message.content == "!calskip") {
         const voiceChannel = message.member.voice.channel
