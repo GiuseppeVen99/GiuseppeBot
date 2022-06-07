@@ -162,7 +162,7 @@ client.on("messageCreate", message => {
 
         message.channel.send("Queue stopped")
     }
-})
+}
 
 distube.on("addSong", (queue, song) => {
     let embed = new Discord.MessageEmbed()
