@@ -23,7 +23,7 @@ const distube = new DisTube(client, {
 })
 
 client.on("messageCreate", message => {
-    if (message.content.startsWith("!calplay")) {
+    if (message.content.startsWith("!play")) {
         const voiceChannel = message.member.voice.channel
         if (!voiceChannel) {
             return message.channel.send("Devi essere in un canale vocale")
@@ -31,7 +31,7 @@ client.on("messageCreate", message => {
 
         const voiceChannelBot = message.guild.channels.cache.find(x => x.type == "GUILD_VOICE" && x.members.has(client.user.id))
         if (voiceChannelBot && voiceChannel.id != voiceChannelBot.id) {
-            return message.channel.send("Qualun'altro sta già ascoltando della musica (Assistenza)")
+            return message.channel.send("Qualun'altro sta già ascoltando della musica")
         }
 
         let args = message.content.split(/\s+/)
@@ -48,7 +48,7 @@ client.on("messageCreate", message => {
         })
     }
 
-    if (message.content == "!calpause") {
+    if (message.content == "!pause") {
         const voiceChannel = message.member.voice.channel
         if (!voiceChannel) {
             return message.channel.send("Devi essere in un canale vocale")
@@ -61,6 +61,7 @@ client.on("messageCreate", message => {
 
         try {
             distube.pause(message)
+                .catch(() => { return message.channel.send("Nessuna canzone in riproduzione o canzone già in pausa") })
         } catch {
             return message.channel.send("Nessuna canzone in riproduzione o canzone già in pausa")
         }
@@ -68,7 +69,7 @@ client.on("messageCreate", message => {
         message.channel.send("Song paused")
     }
 
-    if (message.content == "!calresume") {
+    if (message.content == "!resume") {
         const voiceChannel = message.member.voice.channel
         if (!voiceChannel) {
             return message.channel.send("Devi essere in un canale vocale")
@@ -81,26 +82,112 @@ client.on("messageCreate", message => {
 
         try {
             distube.resume(message)
+                .catch(() => { return message.channel.send("Nessuna canzone in riproduzione o canzone già in riproduzione") })
         } catch {
             return message.channel.send("Nessuna canzone in riproduzione o canzone già in riproduzione")
         }
 
-        message.channel.send("Song resumed")
+        message.channel.send("Canzone ripresa")
     }
 
-    if (message.content == "!calloop") {
+    if (message.content == "!queue") {
         const voiceChannel = message.member.voice.channel
         if (!voiceChannel) {
             return message.channel.send("Devi essere in un canale vocale")
         }
 
-        try {
-            distube.setRepeatMode(message)
-        } catch {
-            return message.channel.send("Nessuna canzone in riproduzione o canzone già in riproduzione")
+        const voiceChannelBot = message.guild.channels.cache.find(x => x.type == "GUILD_VOICE" && x.members.has(client.user.id))
+        if (voiceChannelBot && voiceChannel.id != voiceChannelBot.id) {
+            return message.channel.send("Qualun'altro sta già ascoltando della musica")
         }
 
-    if (message.content == "!calskip") {
+        let queue = distube.getQueue(message)
+
+        if (!queue) return message.channel.send("Coda vuota")
+
+        let totPage = Math.ceil(queue.songs.length / 10)
+        let page = 1
+
+        let songsList = ""
+        for (let i = 10 * (page - 1); i < 10 * page; i++) {
+            if (queue.songs[i]) {
+                songsList += `${i + 1}. **${queue.songs[i].name.length <= 100 ? queue.songs[i].name : `${queue.songs[i].name.slice(0, 100)}...`}** - ${queue.songs[i].formattedDuration}\r`
+            }
+        }
+
+        let embed = new Discord.MessageEmbed()
+            .addField("Queue", songsList)
+            .setFooter({ text: `Page ${page}/${totPage}` })
+
+        let button1 = new Discord.MessageButton()
+            .setLabel("Indietro")
+            .setStyle("PRIMARY")
+            .setCustomId("indietro")
+
+        let button2 = new Discord.MessageButton()
+            .setLabel("Avanti")
+            .setStyle("PRIMARY")
+            .setCustomId("avanti")
+
+        if (page == 1) button1.setDisabled()
+        if (page == totPage) button2.setDisabled()
+
+        let row = new Discord.MessageActionRow()
+            .addComponents(button1)
+            .addComponents(button2)
+
+        message.channel.send({ embeds: [embed], components: [row] })
+            .then(msg => {
+                const collector = msg.createMessageComponentCollector()
+
+                collector.on("collect", i => {
+                    i.deferUpdate()
+
+                    if (i.user.id != message.author.id) return i.reply({ content: "Questo bottone non è tuo", ephemeral: true })
+
+                    if (i.customId == "indietro") {
+                        page--
+                        if (page < 1) page = 1
+                    }
+                    if (i.customId == "avanti") {
+                        page++
+                        if (page > totPage) page = totPage
+                    }
+
+                    let songsList = ""
+                    for (let i = 10 * (page - 1); i < 10 * page; i++) {
+                        if (queue.songs[i]) {
+                            songsList += `${i + 1}. **${queue.songs[i].name.length <= 100 ? queue.songs[i].name : `${queue.songs[i].name.slice(0, 100)}...`}** - ${queue.songs[i].formattedDuration}\r`
+                        }
+                    }
+
+                    let embed = new Discord.MessageEmbed()
+                        .addField("Queue", songsList)
+                        .setFooter({ text: `Page ${page}/${totPage}` })
+
+                    let button1 = new Discord.MessageButton()
+                        .setLabel("Indietro")
+                        .setStyle("PRIMARY")
+                        .setCustomId("indietro")
+
+                    let button2 = new Discord.MessageButton()
+                        .setLabel("Avanti")
+                        .setStyle("PRIMARY")
+                        .setCustomId("avanti")
+
+                    if (page == 1) button1.setDisabled()
+                    if (page == totPage) button2.setDisabled()
+
+                    let row = new Discord.MessageActionRow()
+                        .addComponents(button1)
+                        .addComponents(button2)
+
+                    msg.edit({ embeds: [embed], components: [row] })
+                })
+            })
+    }
+
+    if (message.content == "!skip") {
         const voiceChannel = message.member.voice.channel
         if (!voiceChannel) {
             return message.channel.send("Devi essere in un canale vocale")
@@ -121,7 +208,7 @@ client.on("messageCreate", message => {
         message.channel.send("Song skipped")
     }
 
-    if (message.content == "!calprevious") {
+    if (message.content == "!previous") {
         const voiceChannel = message.member.voice.channel
         if (!voiceChannel) {
             return message.channel.send("Devi essere in un canale vocale")
@@ -139,10 +226,10 @@ client.on("messageCreate", message => {
             return message.channel.send("Nessuna canzone in riproduzione o canzone precedente non presente")
         }
 
-        message.channel.send("Previous song")
+        message.channel.send("Canzone precedente")
     }
 
-    if (message.content == "!calstop") {
+    if (message.content == "!stop") {
         const voiceChannel = message.member.voice.channel
         if (!voiceChannel) {
             return message.channel.send("Devi essere in un canale vocale")
@@ -150,7 +237,7 @@ client.on("messageCreate", message => {
 
         const voiceChannelBot = message.guild.channels.cache.find(x => x.type == "GUILD_VOICE" && x.members.has(client.user.id))
         if (voiceChannelBot && voiceChannel.id != voiceChannelBot.id) {
-            return message.channel.send("Qualun'altro sta già ascoltando della musica (Staff)")
+            return message.channel.send("Qualun'altro sta già ascoltando della musica")
         }
 
         try {
@@ -160,13 +247,13 @@ client.on("messageCreate", message => {
             return message.channel.send("Nessuna canzone in riproduzione")
         }
 
-        message.channel.send("Queue stopped")
+        message.channel.send("Coda stoppata")
     }
-}
+})
 
 distube.on("addSong", (queue, song) => {
     let embed = new Discord.MessageEmbed()
-        .setTitle("Canzone aggiunta alla coda")
+        .setTitle("Canzone aggiunta")
         .addField("Canzone", song.name)
 
     queue.textChannel.send({ embeds: [embed] })
