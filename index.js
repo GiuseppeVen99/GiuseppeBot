@@ -249,6 +249,32 @@ client.on("messageCreate", message => {
     }
 })
 
+client.on('message', (message) => {
+    if (!message.content.startsWith(config.prefix)) return;
+    const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
+    const command = args.shift();
+    if (command == "repeat") {
+        let mode = distube.setRepeatMode(message, parseInt(args[0]));
+        mode = mode ? mode == 2 ? "Repeat queue" : "Repeat song" : "Off";
+        message.channel.send("Set repeat mode to `" + mode + "`");
+    }
+});
+
+const { RepeatMode } = require("distube");
+let mode;
+switch(distube.setRepeatMode(message, parseInt(args[0]))) {
+    case RepeatMode.DISABLED:
+        mode = "Off";
+        break;
+    case RepeatMode.SONG:
+        mode = "Repeat a song";
+        break;
+    case RepeatMode.QUEUE:
+        mode = "Repeat all queue";
+        break;
+}
+message.channel.send("Set repeat mode to `" + mode + "`");
+
 distube.on("addSong", (queue, song) => {
     let embed = new Discord.MessageEmbed()
         .setTitle("Song added")
