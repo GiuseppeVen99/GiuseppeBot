@@ -132,7 +132,7 @@ client.on("messageCreate", message => {
         message.channel.send("Canzone precedente")
     }
 
-    if (message.content == "calloop") {
+    if (message.content == "!calloop") {
         if (0 <= Number(args[0]) && Number(args[0]) <= 2) {
             distube.setRepeatMode(message, parseInt(args[0]))
             return embedbuilder(client, message, "#c219d8", "Repeat mode set to:!", `${args[0].replace("0", "OFF").replace("1", "Repeat song").replace("2", "Repeat Queue")}`)
@@ -184,3 +184,14 @@ distube.on("playSong", (queue, song) => {
 distube.on("searchNoResult", (message, query) => {
     message.channel.send("Canzone non trovata")
 })
+
+//function embeds
+//embedbuilder(client, message, "RED", "TITEL", "DESCRIPTION")
+function embedbuilder(client, message, color, title, description){
+    let embed = new Discord.MessageEmbed()
+    .setColor(color)
+    .setFooter(client.user.username, client.user.displayAvatarURL());
+    if(title) embed.setTitle(title);
+    if(description) embed.setDescription(description);
+    return message.channel.send(embed);
+}
