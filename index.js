@@ -132,14 +132,6 @@ client.on("messageCreate", message => {
         message.channel.send("Canzone precedente")
     }
 
-    if (message.content == "!calloop") {
-        try {
-            distube.setRepeatMode(message, parseInt(args[0]))
-        } catch {
-            return message.channel.send("Errore")
-        }
-    }
-
     if (message.content == "!calstop") {
         const voiceChannel = message.member.voice.channel
         if (!voiceChannel) {
@@ -182,14 +174,3 @@ distube.on("playSong", (queue, song) => {
 distube.on("searchNoResult", (message, query) => {
     message.channel.send("Canzone non trovata")
 })
-
-//function embeds
-//embedbuilder(client, message, "RED", "TITEL", "DESCRIPTION")
-function embedbuilder(client, message, color, title, description){
-    let embed = new Discord.MessageEmbed()
-    .setColor(color)
-    .setFooter(client.user.username, client.user.displayAvatarURL());
-    if(title) embed.setTitle(title);
-    if(description) embed.setDescription(description);
-    return message.channel.send(embed);
-}
