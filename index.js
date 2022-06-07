@@ -87,29 +87,6 @@ client.on("messageCreate", message => {
 
         message.channel.send("Song resumed")
     }
-    
-        if (!message.content.startsWith(!calrepeat)) return;
-        const command = args.shift();
-        if (command == "calrepeat") {
-            let mode = distube.setRepeatMode(message, parseInt(args[0]));
-            mode = mode ? mode == 2 ? "Repeat queue" : "Repeat song" : "Off";
-            message.channel.send("Set repeat mode to `" + mode + "`");
-        }
-    
-    const { RepeatMode } = require("distube");
-    let mode;
-    switch(distube.setRepeatMode(message, parseInt(args[0]))) {
-        case RepeatMode.DISABLED:
-            mode = "Off";
-            break;
-        case RepeatMode.SONG:
-            mode = "Repeat a song";
-            break;
-        case RepeatMode.QUEUE:
-            mode = "Repeat all queue";
-            break;
-    }
-    message.channel.send("Set repeat mode to `" + mode + "`");
 
     if (message.content == "!calskip") {
         const voiceChannel = message.member.voice.channel
