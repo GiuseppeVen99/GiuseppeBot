@@ -10,6 +10,14 @@ client.on("ready", () => {
     console.log("ONLINE");
 })
 
+client.user.setPresence({
+    status: "online",  // You can show online, idle... Do not disturb is dnd
+    game: {
+        name: "mc.calabriacity.it",  // The message shown
+        type: "PLAYING" // PLAYING, WATCHING, LISTENING, STREAMING,
+    }
+});
+
 const { DisTube } = require("distube")
 //Plugin facoltativi
 const { SpotifyPlugin } = require("@distube/spotify")
