@@ -10,7 +10,7 @@ client.on("ready", () => {
     console.log("ONLINE");
 })
 
-client.user.setActivity("with depression", {
+client.setActivity("with depression", {
     type: "STREAMING",
     url: "https://www.twitch.tv/example-url"
 });
