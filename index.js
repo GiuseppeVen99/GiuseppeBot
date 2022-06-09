@@ -10,11 +10,6 @@ client.on("ready", () => {
     console.log("ONLINE");
 })
 
-client.setActivity("with depression", {
-    type: "STREAMING",
-    url: "https://www.twitch.tv/example-url"
-});
-
 const { DisTube } = require("distube")
 //Plugin facoltativi
 const { SpotifyPlugin } = require("@distube/spotify")
