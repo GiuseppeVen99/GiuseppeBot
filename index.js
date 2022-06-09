@@ -10,13 +10,9 @@ client.on("ready", () => {
     console.log("ONLINE");
 })
 
-client.user.setPresence({
-    status: "online",  // You can show online, idle... Do not disturb is dnd
-    game: {
-        name: "mc.calabriacity.it",  // The message shown
-        type: "PLAYING" // PLAYING, WATCHING, LISTENING, STREAMING,
-    }
-});
+client.user.setActivity('some activity ', { type: 'PLAYING' })
+  .then(presence => console.log(`Activity set to ${presence.activities[0].name}`))
+  .catch(console.error);
 
 const { DisTube } = require("distube")
 //Plugin facoltativi
