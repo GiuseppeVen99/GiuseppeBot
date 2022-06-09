@@ -10,16 +10,10 @@ client.on("ready", () => {
     console.log("ONLINE");
 })
 
-bot.on('ready', () => {
-    bot.user.setStatus('available')
-    bot.user.setPresence({
-        game: {
-            name: 'with depression',
-            type: "STREAMING",
-            url: "https://www.twitch.tv/monstercat"
-        }
-    });
-})
+client.user.setActivity("with depression", {
+    type: "STREAMING",
+    url: "https://www.twitch.tv/example-url"
+});
 
 const { DisTube } = require("distube")
 //Plugin facoltativi
