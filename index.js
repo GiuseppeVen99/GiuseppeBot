@@ -8,11 +8,8 @@ client.login(process.env.token);
 
 client.on("ready", () => {
     console.log("ONLINE");
+    client.user.setActivity("mc.calabriacity.it");
 })
-
-bot.user.setActivity('some activity', { type: 'WATCHING' }) // STREAMING, WATCHING, CUSTOM_STATUS, PLAYING, COMPETING
-.then(presence => console.log(`Activity set to ${presence.activities[0].name}`))
-  .catch(console.error);
 
 const { DisTube } = require("distube")
 //Plugin facoltativi
