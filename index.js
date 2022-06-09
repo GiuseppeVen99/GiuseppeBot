@@ -1,4 +1,9 @@
 // Code By GiulioPaesani (GiulioAndCode)
+client.user.setActivity("CalabriaCity", {
+    type: "STREAMING",
+    url: "mc.calabriacity.it"
+  });
+
 const Discord = require('discord.js');
 const client = new Discord.Client({
     intents: ["GUILDS", "GUILD_MEMBERS", "GUILD_MESSAGES", "GUILD_VOICE_STATES"] //Aggiungere GUILD_VOICE_STATES
