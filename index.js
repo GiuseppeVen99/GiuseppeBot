@@ -67,7 +67,7 @@ client.on("messageCreate", message => {
             return message.channel.send("Nessuna canzone in riproduzione o canzone già in pausa")
         }
 
-        message.channel.send("Canzonne messa in pausa")
+        message.channel.send("Canzone messa in pausa")
     }
 
     if (message.content == "!calresume") {
