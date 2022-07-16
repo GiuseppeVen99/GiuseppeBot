@@ -94,12 +94,12 @@ client.on("messageCreate", message => {
     if (message.content == "!calskip") {
         const voiceChannel = message.member.voice.channel
         if (!voiceChannel) {
-            return message.channel.send("Devi essere in un canale vocale")
+            return message.channel.send("Errore, devi essere in un canale vocale")
         }
 
         const voiceChannelBot = message.guild.channels.cache.find(x => x.type == "GUILD_VOICE" && x.members.has(client.user.id))
         if (voiceChannelBot && voiceChannel.id != voiceChannelBot.id) {
-            return message.channel.send("Qualun'altro sta già ascoltando della musica")
+            return message.channel.send("Errore, qualun'altro sta già ascoltando della musica")
         }
 
         try {
